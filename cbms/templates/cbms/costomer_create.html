@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'cbms/css/style.css' %}">
+  </head>
+  <body>
+    <div class="wrapper">
+      <h2>顧客追加</h2>
+      <table>
+        <form action="{% url 'costomer_create' %}" method="post">
+          {% csrf_token %}
+          {{ form.as_table }}
+          <tr>
+            <td></td>
+            <td><input type="submit" value="登録"><td/>
+          </tr>
+        </form>
+      </table>
+
+      <div class="btn">
+        <a href="{% url 'costomers' %}">戻る</a>
+      </div>
+    </div>
+  </body>
+</html>
