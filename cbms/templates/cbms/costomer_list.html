@@ -24,7 +24,7 @@
             <td>{% if costomer.gender == '1' %}女{% endif %}
                 {% if costomer.gender == '2' %}男{% endif %}</td>
             <td>{{costomer.age}}</td>
-            <td>あ</td>
+            <td><a href="{% url 'costomer_edit' costomer.id %}" class="edit-clm" >編集</a></td>
         {% endfor %}
         </tr>
       </table>
