@@ -64,3 +64,16 @@ def history_create(request):
             'form': HistoryForm(),
     }
     return render(request, 'cbms/lesson_history_create.html', params)
+
+def history_edit(request, num):
+    obj = History.objects.get(id=num)
+    if request.method == 'POST':
+        history = HistoryForm(request.POST, instance=obj)
+        history.save()
+        return redirect(to='/cbms/histories')
+    params = {
+            'title': 'History Edit',
+            'id': num,
+            'form': HistoryForm(instance=obj),
+    }
+    return render(request, 'cbms/lesson_history_edit.html', params)

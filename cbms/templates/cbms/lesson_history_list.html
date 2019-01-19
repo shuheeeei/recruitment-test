@@ -26,7 +26,7 @@
               <td>{{history.genre.subject}}</td>
               <td>{{history.date}}</td>
               <td>{{history.time}}</td>
-              <td><a href="#" class="edit-clm" >編集</a></td>
+              <td><a href="{% url 'history_edit' history.id %}" class="edit-clm" >編集</a></td>
           {% endfor %}
         {% endif%}
         </tr>
