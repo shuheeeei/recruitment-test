@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Costomer
+from .models import Costomer, History, Genre
 from django.shortcuts import redirect
-from .forms import CostomerForm
+from .forms import CostomerForm, HistoryForm
 
 
 def index(request):
@@ -43,3 +43,24 @@ def costomer_edit(request, num):
             'form': CostomerForm(instance=obj),
     }
     return render(request, 'cbms/costomer_edit.html', params)
+
+
+def histories(request):
+    data = History.objects.all()
+    params = {
+            'title': 'Lesson Histories',
+            'data': data,
+    }
+    return render(request, 'cbms/lesson_history_list.html', params)
+
+def history_create(request):
+    if request.method == 'POST':
+        obj = History()
+        history = HistoryForm(request.POST, instance=obj)
+        history.save()
+        return redirect(to='/cbms/histories')
+    params = {
+            'title': 'History Resiter',
+            'form': HistoryForm(),
+    }
+    return render(request, 'cbms/lesson_history_create.html', params)
