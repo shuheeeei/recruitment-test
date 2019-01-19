@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'cbms/css/style.css' %}">
+  </head>
+  <body>
+    <div class="wapper">
+      <h2>顧客一覧</h2>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+          <th>性別</th>
+          <th>年齢</th>
+          <th></th>　<!-- 編集欄 -->
+        </tr>
+        {% for costomer in data %}
+          <tr>
+            <td>{{costomer.id}}</td>
+            <td>{{costomer.name}}</td>
+            <td>{% if costomer.gender == '1' %}女{% endif %}
+                {% if costomer.gender == '2' %}男{% endif %}</td>
+            <td>{{costomer.age}}</td>
+            <td>あ</td>
+        {% endfor %}
+        </tr>
+      </table>
+
+      <div class="btn">
+        <a href="{% url 'costomer_create' %}">新規追加</a>
+      </div>
+    </div>
+  </body>
+</html>
