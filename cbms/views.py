@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Costomer, History, Genre
 from django.shortcuts import redirect
-from .forms import CostomerForm, HistoryForm
-
+from .forms import CostomerForm, HistoryForm, DateForm
+import datetime
+from dateutil.relativedelta import relativedelta
+from django.db.models import Count, Sum
 
 def index(request):
     params = {
@@ -55,10 +57,12 @@ def histories(request):
 
 def history_create(request):
     if request.method == 'POST':
-        obj = History()
-        history = HistoryForm(request.POST, instance=obj)
-        history.save()
-        return redirect(to='/cbms/histories')
+        form = HistoryForm(request.POST)
+        if form.is_valid():
+            obj = History()
+            history = HistoryForm(request.POST, instance=obj)
+            history.save()
+            return redirect(to='/cbms/histories')
     params = {
             'title': 'History Resiter',
             'form': HistoryForm(),
@@ -67,13 +71,101 @@ def history_create(request):
 
 def history_edit(request, num):
     obj = History.objects.get(id=num)
+    form = HistoryForm(request.POST)
     if request.method == 'POST':
-        history = HistoryForm(request.POST, instance=obj)
-        history.save()
-        return redirect(to='/cbms/histories')
+        if form.is_valid():
+            history = HistoryForm(request.POST, instance=obj)
+            history.save()
+            return redirect(to='/cbms/histories')
     params = {
             'title': 'History Edit',
             'id': num,
             'form': HistoryForm(instance=obj),
     }
     return render(request, 'cbms/lesson_history_edit.html', params)
+
+
+def billing_list(request):
+    if request.method == 'POST':
+        select_year = request.POST['choice'].split('/')[0]
+        select_month = request.POST['choice'].split('/')[1]
+
+        billing_list = []
+        #日付でHistoryからデータ抽出
+        base_query = History.objects.filter(date__year=select_year, date__month=select_month)
+        # 配列で顧客IDを取得
+        costomer_ids = base_query.values_list('costomer', flat=True).distinct()
+        for costomer_id in costomer_ids:
+            billing_dict = {}
+            billing_dict['costomer_id'] = costomer_id
+            costomer = Costomer.objects.get(id=costomer_id)
+            billing_dict['costomer_name'] = costomer.name
+
+            genre_ids = base_query.filter(costomer=costomer_id).values_list('genre', flat=True).order_by('genre').distinct()
+            genre = ''
+            for genre_id in genre_ids:
+                gnr = Genre.objects.filter(id=genre_id).values()
+                genre += gnr[0]['subject'] + '/'
+            billing_dict['genre'] = genre
+            genre_num = len(genre_ids)
+            billing_dict['genre_num'] = genre_num
+            total_lesson = base_query.filter(costomer=costomer_id).count()
+            billing_dict['total'] = total_lesson
+
+            english_time = base_query.filter(costomer=costomer_id).filter(genre=1).aggregate(Sum('time'))
+            if english_time['time__sum']:
+                english_total_time = english_time['time__sum']
+            else:
+                english_total_time = 0
+            finance_time = base_query.filter(costomer=costomer_id).filter(genre=2).aggregate(Sum('time'))
+            if finance_time['time__sum']:
+                finance_total_time = finance_time['time__sum']
+            else:
+                finance_total_time = 0
+            programing_time = base_query.filter(costomer=costomer_id).filter(genre=3).aggregate(Sum('time'))
+            if programing_time['time__sum']:
+                programing_total_time = programing_time['time__sum']
+            else:
+                programing_total_time = 0
+
+
+            '''英語'''
+            english_fees = Genre.objects.filter(subject='英語')
+            english_total_billing = english_fees[0].base_fee + english_total_time * english_fees[0].charge_fee
+
+            '''ファイナンス'''
+            finance_fees = Genre.objects.filter(subject='ファイナンス')
+            if finance_total_time > 50:
+                finance_total_billing = finance_fees[0].base_fee + finance_total_time * finance_fees[0].charge_fee + (finance_total_time - 20) * (finance_fees[0].charge_fee - 800)
+            elif finance_total_time > 20:
+                finance_total_billing = finance_fees[0].base_fee + finance_total_time * finance_fees[0].charge_fee + (finance_total_time - 20) * (finance_fees[0].charge_fee - 500)
+            else:
+                finance_total_billing = finance_fees[0].base_fee + finance_total_time * finance_fees[0].charge_fee
+
+            '''プログラミング'''
+            programing_fees = Genre.objects.filter(subject='プログラミング')
+            if programing_total_time > 50:
+                programing_total_billing = programing_fees[0].base_fee + programing_total_time * programing_fees[0].charge_fee + (programing_total_time - 20) * (programing_fees[0].charge_fee - 1000)
+            elif programing_total_time > 35:
+                programing_total_billing = programing_fees[0].base_fee + programing_total_time * programing_fees[0].charge_fee + (programing_total_time - 20) * (programing_fees[0].charge_fee - 700)
+            elif programing_total_time > 20:
+                programing_total_billing = programing_fees[0].base_fee + programing_total_time * programing_fees[0].charge_fee + (programing_total_time - 20) * (programing_fees[0].charge_fee - 500)
+            else:
+                programing_total_billing = programing_fees[0].base_fee + programing_total_time * programing_fees[0].charge_fee
+
+            total_billing = english_total_billing +finance_total_billing + programing_total_billing
+            billing_dict['total_billing'] = total_billing
+
+            billing_list.append(billing_dict.copy())
+
+        params = {
+                'title': 'Billing List',
+                'form': DateForm(),
+                'billings': billing_list,
+        }
+    else:
+        params = {
+                'title': 'Billing List',
+                'form': DateForm(),
+        }
+    return render(request, 'cbms/billing_list.html', params)
