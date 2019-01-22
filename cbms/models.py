@@ -31,4 +31,4 @@ class History(models.Model):
 
 
     def __str__(self):
-        return 'History:id=' + str(self.id) + ', ' + '受講時間=' + str(self.time) + ', ' + '受講日:' +  str(self.date) + ', ' + '請求金額=' + str(self.billing)
+        return 'History:id=' + str(self.id) + ', ' + '受講時間=' + str(self.time) + ', ' + '受講日:' +  str(self.date) + str(self.costomer) + str(self.genre)

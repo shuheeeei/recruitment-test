@@ -9,4 +9,5 @@ urlpatterns = [
     path('histories/', views.histories, name='histories'),
     path('histories/create', views.history_create, name='history_create'),
     path('histories/edit/<int:num>', views.history_edit, name='history_edit'),
+    path('billings', views.billing_list, name='billing'),
 ]
