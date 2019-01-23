@@ -91,11 +91,20 @@ def billing_list(request):
         select_month = request.POST['choice'].split('/')[1]
 
         billing_list = []
-        #日付でHistoryからデータ抽出
+        #日付でHistoryからデータ抽出(顧客の重複あり)
         base_query = History.objects.filter(date__year=select_year, date__month=select_month)
-        # 配列で顧客IDを取得
+        # 配列で受講済み顧客IDを取得
         costomer_ids = base_query.values_list('costomer', flat=True).distinct()
-        for costomer_id in costomer_ids:
+        costomer_ids_list = list(costomer_ids)
+        #無受講の顧客抽出
+        #全顧客IDの抽出
+        all_costomer_ids = Costomer.objects.values_list('id', flat=True)
+        all_costomer_ids_list = list(all_costomer_ids)
+        non_active_costomer_ids = []
+        non_active_costomer_ids = list(set(all_costomer_ids_list) -set(costomer_ids_list))
+        costomer_ids_list += non_active_costomer_ids
+
+        for costomer_id in costomer_ids_list:
             billing_dict = {}
             billing_dict['costomer_id'] = costomer_id
             costomer = Costomer.objects.get(id=costomer_id)
