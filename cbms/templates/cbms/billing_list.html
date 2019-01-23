@@ -31,7 +31,12 @@
               <td>{{billing.costomer_name}}</td>
               <td>{{billing.genre}} ({{billing.genre_num}})</td>
               <td>{{billing.total}}</td>
-              <td>{{billing.total_billing}}</td>
+              <td>{% if billing.total != 0 %}
+                    {{billing.total_billing}}
+                  {% else %}
+                    0
+                  {% endif %}
+              </td>
             </tr>
           {% endfor %}
       </table>
