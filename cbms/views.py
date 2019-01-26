@@ -185,12 +185,13 @@ def report(request):
         select_year = request.POST['choice'].split('/')[0]
         select_month = request.POST['choice'].split('/')[1]
 
-        genre_gender_report_list = []
         base_query = History.objects.filter(date__year=select_year, date__month=select_month)
         GENDER_CHOICE = {'1': '女性', '2': '男性'}
 
         genre_ids = Genre.objects.all().values_list('id', flat=True)
 
+        '''ジャンルと性別　別'''
+        genre_gender_report_list = []
         for genre_id in genre_ids:
             genre_name = Genre.objects.get(id=genre_id)
             trainees = base_query.filter(genre=genre_id).values_list('costomer', flat=True).distinct()
@@ -296,7 +297,7 @@ def report(request):
                     }
             genre_gender_report_list.append(female_total)
 
-
+        '''ジャンルと年齢層　別'''
         genre_age_report_list = []
         for genre_id in genre_ids:
             genre_name = Genre.objects.get(id=genre_id)
