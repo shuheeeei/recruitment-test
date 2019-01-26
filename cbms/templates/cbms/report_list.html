@@ -35,7 +35,27 @@
           {% endfor %}
       </table>
 
-      <p>{{check}}</p>
+      <h3>ジャンルと年齢層 別</h3>
+      <table>
+        <tr>
+          <th>ジャンル</th>
+          <th>性別</th>
+          <th>年齢層別</th>
+          <th>レッスン数</th>
+          <th>受講者数</th>
+          <th>売り上げ</th>
+        </tr>
+          {% for report in reports2  %}
+            <tr>
+              <td>{{report.genre}}</td>
+              <td>{{report.gender}}</td>
+              <td>{{report.age_group}}0代</td>
+              <td>{{report.lessons_num}}</td>
+              <td>{{report.trainees_num}}</td>
+              <td>{{report.sale}}</td>
+            </tr>
+          {% endfor %}
+      </table>
     </div>
   </body>
 </html>
