@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'cbms/css/style.css' %}">
+  </head>
+  <body>
+    <div class="wrapper">
+      <h2>レポート</h2>
+      <form class="" action="{% url 'report' %}" method="post">
+        {% csrf_token %}
+        {{form.choice.label_tag}}
+        {{ form.choice }}
+        <input type="submit" value="取得">
+      </form>
+      <h3>ジャンルと性別 別</h3>
+      <table>
+        <tr>
+          <th>ジャンル</th>
+          <th>性別</th>
+          <th>レッスン数</th>
+          <th>受講者数</th>
+          <th>売り上げ</th>
+        </tr>
+          {% for report in reports1  %}
+            <tr>
+              <td>{{report.genre}}</td>
+              <td>{{report.gender}}</td>
+              <td>{{report.lessons_num}}</td>
+              <td>{{report.trainees_num}}</td>
+              <td>{{report.sale}}</td>
+            </tr>
+          {% endfor %}
+      </table>
+
+      <p>{{check}}</p>
+    </div>
+  </body>
+</html>
