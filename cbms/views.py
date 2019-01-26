@@ -261,9 +261,7 @@ def report(request):
                 for age_group in age_groups:
                     trainee_ids = trainees.filter(costomer__gender=gndr, costomer__age__startswith=age_group)
                     gender = GENDER_CHOICE[gndr]
-                    # IDを数えることで人数を求める
                     trainees_num = trainee_ids.count()
-                    # 選択した年月の受講記録の中で英語を受けた男性をカウント
                     lesson_num = base_query.filter(genre=genre_id, costomer__gender=gndr,  costomer__age__startswith=age_group).count()
                     total_times = []
                     total_billing = 0
