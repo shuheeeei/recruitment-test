@@ -189,113 +189,65 @@ def report(request):
         GENDER_CHOICE = {'1': '女性', '2': '男性'}
 
         genre_ids = Genre.objects.all().values_list('id', flat=True)
+        male_female = ['2', '1']
 
         '''ジャンルと性別　別'''
         genre_gender_report_list = []
         for genre_id in genre_ids:
-            genre_name = Genre.objects.get(id=genre_id)
-            trainees = base_query.filter(genre=genre_id).values_list('costomer', flat=True).distinct()
+            for gndr in male_female:
+                genre_name = Genre.objects.get(id=genre_id)
+                trainees = base_query.filter(genre=genre_id).values_list('costomer', flat=True).distinct()
 
-            male_trainee_ids = trainees.filter(costomer__gender='2')
-            gender = GENDER_CHOICE['2']
-            male_trainees_num = male_trainee_ids.count()
-            male_lesson_num = base_query.filter(genre=genre_id, costomer__gender='2').count()
+                trainee_ids = trainees.filter(costomer__gender=gndr)
+                gender = GENDER_CHOICE[gndr]
+                trainees_num = trainee_ids.count()
+                lesson_num = base_query.filter(genre=genre_id, costomer__gender=gndr).count()
 
-            total_times = []
-            total_billing = 0
-            for male_trainee_id in male_trainee_ids:
-                total_time = base_query.filter(costomer=male_trainee_id, genre=genre_id).aggregate(Sum('time'))
-                total_times.append(total_time['time__sum'])
-                fees = Genre.objects.get(id=genre_id)
-                if genre_id == 1:
-                    for total_time in total_times:
-                        total_billing += fees.base_fee + total_time * fees.charge_fee
-                elif genre_id == 2:
-                    for total_time in total_times:
-                        if total_time > 50:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 800)
-                        elif total_time > 20:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 500)
-                        else:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee
-                else:
-                    for total_time in total_times:
-                        if total_time > 50:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 1000)
-                        elif total_time > 35:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 700)
-                        elif total_time > 20:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 500)
-                        else:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee
-            male_total = {
-                    'genre': genre_name, 'gender': gender, 'lessons_num': male_lesson_num,\
-                     'trainees_num': male_trainees_num, 'sale': total_billing
-                    }
-            genre_gender_report_list.append(male_total)
+                total_times = []
+                total_billing = 0
+                for trainee_id in trainee_ids:
+                    total_time = base_query.filter(costomer=trainee_id, genre=genre_id).aggregate(Sum('time'))
+                    total_times.append(total_time['time__sum'])
+                    fees = Genre.objects.get(id=genre_id)
+                    if genre_id == 1:
+                        for total_time in total_times:
+                            total_billing += fees.base_fee + total_time * fees.charge_fee
+                    elif genre_id == 2:
+                        for total_time in total_times:
+                            if total_time > 50:
+                                total_billing = fees.base_fee\
+                                                + total_time * fees.charge_fee\
+                                                + (total_time - 20) * (fees.charge_fee - 800)
+                            elif total_time > 20:
+                                total_billing = fees.base_fee\
+                                                + total_time * fees.charge_fee\
+                                                + (total_time - 20) * (fees.charge_fee - 500)
+                            else:
+                                total_billing = fees.base_fee\
+                                                + total_time * fees.charge_fee
+                    else:
+                        for total_time in total_times:
+                            if total_time > 50:
+                                total_billing = fees.base_fee\
+                                                + total_time * fees.charge_fee\
+                                                + (total_time - 20) * (fees.charge_fee - 1000)
+                            elif total_time > 35:
+                                total_billing = fees.base_fee\
+                                                + total_time * fees.charge_fee\
+                                                + (total_time - 20) * (fees.charge_fee - 700)
+                            elif total_time > 20:
+                                total_billing = fees.base_fee\
+                                                + total_time * fees.charge_fee\
+                                                + (total_time - 20) * (fees.charge_fee - 500)
+                            else:
+                                total_billing = fees.base_fee\
+                                                + total_time * fees.charge_fee
+                total = {
+                        'genre': genre_name, 'gender': gender, 'lessons_num': lesson_num,\
+                         'trainees_num': trainees_num, 'sale': total_billing
+                        }
+                genre_gender_report_list.append(total)
 
-
-            female_trainee_ids = trainees.filter(costomer__gender='1')
-            gender = GENDER_CHOICE['1']
-            female_trainees_num = female_trainee_ids.count()
-            female_lesson_num = base_query.filter(genre=genre_id, costomer__gender='1').count()
-
-            total_times = []
-            total_billing = 0
-            for female_trainee_id in female_trainee_ids:
-                total_time = base_query.filter(costomer=female_trainee_id, genre=genre_id).aggregate(Sum('time'))
-                total_times.append(total_time['time__sum'])
-                fees = Genre.objects.get(id=genre_id)
-                if genre_id == 1:
-                    for total_time in total_times:
-                        total_billing += fees.base_fee + total_time * fees.charge_fee
-                elif genre_id == 2:
-                    for total_time in total_times:
-                        if total_time > 50:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 800)
-                        elif total_time > 20:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 500)
-                        else:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee
-                else:
-                    for total_time in total_times:
-                        if total_time > 50:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 1000)
-                        elif total_time > 35:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 700)
-                        elif total_time > 20:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee\
-                                            + (total_time - 20) * (fees.charge_fee - 500)
-                        else:
-                            total_billing = fees.base_fee\
-                                            + total_time * fees.charge_fee
-            female_total = {
-                    'genre': genre_name, 'gender': gender, 'lessons_num': female_lesson_num,\
-                     'trainees_num': female_trainees_num, 'sale': total_billing
-                    }
-            genre_gender_report_list.append(female_total)
 
         '''ジャンルと年齢層　別'''
         genre_age_report_list = []
@@ -304,7 +256,6 @@ def report(request):
             trainees = base_query.filter(genre=genre_id).values_list('costomer', flat=True).distinct()
 
             age_groups = [1, 2, 3, 4, 5, 6, 7]
-            male_female = ['2', '1']
 
             for gndr in male_female:
                 for age_group in age_groups:
