@@ -308,10 +308,11 @@ def report(request):
                             }
                     genre_age_report_list.append(total)
 
+        selected = str(select_year) + '/' + str(select_month)
 
         params = {
                 'title': 'Report List',
-                'form': DateForm(),
+                'form': DateForm(initial = { 'choice': request.POST['choice'] }),
                 'reports1': genre_gender_report_list,
                 'reports2': genre_age_report_list,
         }
