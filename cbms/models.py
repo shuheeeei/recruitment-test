@@ -10,7 +10,7 @@ GENDER_CHOICE = [
 class Costomer(models.Model):
     name = models.CharField('名前', max_length=20)
     gender = models.CharField('性別', choices=GENDER_CHOICE, max_length=2)
-    age = models.IntegerField('年齢')
+    age = models.IntegerField('年齢', validators=[MinValueValidator(10), MaxValueValidator(79)])
 
     def __str__(self):
         return str(self.name) + '(' + str(self.age) + ')'

@@ -23,14 +23,23 @@ def costomers(request):
 
 def costomer_create(request):
     if request.method == 'POST':
-        obj = Costomer()
-        costomer = CostomerForm(request.POST, instance=obj)
-        costomer.save()
-        return redirect(to='/cbms/costomers')
-    params = {
-            'title': 'Costomer Create',
-            'form': CostomerForm(),
-    }
+        form = CostomerForm(request.POST)
+        if form.is_valid():
+            obj = Costomer()
+            costomer = CostomerForm(request.POST, instance=obj)
+            costomer.save()
+            return redirect(to='/cbms/costomers')
+        else:
+            params = {
+                    'title': 'Costomer Create',
+                    'form': CostomerForm(),
+                    'message': '正しい年齢を入力してください(10~79歳)',
+            }
+    if request.method == 'GET':
+        params = {
+                'title': 'Costomer Create',
+                'form': CostomerForm(),
+            }
     return render(request, 'cbms/costomer_create.html', params)
 
 def costomer_edit(request, num):
