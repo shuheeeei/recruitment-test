@@ -189,7 +189,7 @@ def billing_list(request):
 
         params = {
                 'title': 'Billing List',
-                'form': DateForm(),
+                'form': DateForm(initial = { 'choice': request.POST['choice'] }),
                 'billings': billing_list,
         }
     else:
