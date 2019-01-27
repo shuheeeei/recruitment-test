@@ -1,40 +1,30 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <title>{{title}}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'cbms/css/style.css' %}">
-  </head>
-  <body>
-    <div class="wrapper">
-      <h2>レッスン受講記録一覧</h2>
-      <table>
-        <tr>
-          <th>ID</th>
-          <th>受講者</th>
-          <th>ジャンル</th>
-          <th>受講日</th>
-          <th>受講時間</th>
-          <th></th>　<!-- 編集欄 -->
-        </tr>
-        {% if data %}
-          {% for history in data %}
-            <tr>
-              <td>{{history.costomer.id}}</td>
-              <td>{{history.costomer.name}}</td>
-              <td>{{history.genre.subject}}</td>
-              <td>{{history.date}}</td>
-              <td>{{history.time}}</td>
-              <td><a href="{% url 'history_edit' history.id %}" class="edit-clm" >編集</a></td>
-          {% endfor %}
-        {% endif%}
-        </tr>
-      </table>
+{% extends 'cbms/_base.html' %}
+  {% block content %}
+    <h2>レッスン受講記録一覧</h2>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>受講者</th>
+        <th>ジャンル</th>
+        <th>受講日</th>
+        <th>受講時間</th>
+        <th></th>　<!-- 編集欄 -->
+      </tr>
+      {% if data %}
+        {% for history in data %}
+          <tr>
+            <td>{{history.costomer.id}}</td>
+            <td>{{history.costomer.name}}</td>
+            <td>{{history.genre.subject}}</td>
+            <td>{{history.date}}</td>
+            <td>{{history.time}}</td>
+            <td><a href="{% url 'history_edit' history.id %}" class="edit-clm" >編集</a></td>
+        {% endfor %}
+      {% endif%}
+      </tr>
+    </table>
 
-      <div class="btn">
-        <a href="{% url 'history_create'%}">新規追加</a>
-      </div>
+    <div class="btn">
+      <a href="{% url 'history_create'%}">新規追加</a>
     </div>
-  </body>
-</html>
+  {% endblock content %}
