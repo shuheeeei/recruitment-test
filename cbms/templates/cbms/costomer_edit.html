@@ -1,13 +1,6 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <title>{{title}}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'cbms/css/style.css' %}">
-  </head>
-  <body>
-    <div class="wrapper">
+{% extends 'cbms/_base.html' %}
+  {% block content %}
+
       <h2>顧客追加</h2>
       <table>
         <form action="{% url 'costomer_edit' id %}" method="post">
@@ -23,6 +16,4 @@
       <div class="btn">
         <a href="{% url 'costomers' %}">戻る</a>
       </div>
-    </div>
-  </body>
-</html>
+  {% endblock content %}

@@ -1,28 +1,18 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <title>{{title}}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'cbms/css/style.css' %}">
-  </head>
-  <body>
-    <div class="wrapper">
-      <h2>レッスン受講記録編集</h2>
-      <table>
-        <form action="{% url 'history_edit' id %}" method="post">
-          {% csrf_token %}
-          {{ form.as_table }}
-          <tr>
-            <td></td>
-            <td><input type="submit" value="更新"><td/>
-          </tr>
-        </form>
-      </table>
+{% extends 'cbms/_base.html' %}
+  {% block content %}
+    <h2>レッスン受講記録編集</h2>
+    <table>
+      <form action="{% url 'history_edit' id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td><input type="submit" value="更新"><td/>
+        </tr>
+      </form>
+    </table>
 
-      <div class="btn">
-        <a href="{% url 'histories' %}">戻る</a>
-      </div>
+    <div class="btn">
+      <a href="{% url 'histories' %}">戻る</a>
     </div>
-  </body>
-</html>
+  {% endblock content %}
