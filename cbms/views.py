@@ -63,10 +63,21 @@ def history_create(request):
             history = HistoryForm(request.POST, instance=obj)
             history.save()
             return redirect(to='/cbms/histories')
-    params = {
-            'title': 'History Resiter',
-            'form': HistoryForm(),
-    }
+            params = {
+                    'title': 'History Resiter',
+                    'form': HistoryForm(),
+            }
+        else:
+            params = {
+                    'title': 'History Resiter',
+                    'form': HistoryForm(),
+                    'message': '受講時間は1~12時間の間で入力してください',
+            }
+    if request.method == 'GET':
+        params = {
+                'title': 'History Resiter',
+                'form': HistoryForm(),
+        }
     return render(request, 'cbms/lesson_history_create.html', params)
 
 def history_edit(request, num):
