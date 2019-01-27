@@ -5,6 +5,7 @@
       <table>
         <form action="{% url 'costomer_edit' id %}" method="post">
           {% csrf_token %}
+          {{message}}
           {{ form.as_table }}
           <tr>
             <td></td>
