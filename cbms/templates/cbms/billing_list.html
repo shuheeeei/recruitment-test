@@ -1,11 +1,10 @@
 {% extends 'cbms/_base.html' %}
   {% block content %}
     <h2>請求一覧</h2>
-    <form class="" action="{% url 'billing' %}" method="post">
+    <form id="submit_form" action="{% url 'billing' %}" method="post">
       {% csrf_token %}
       {{form.choice.label_tag}}
       {{ form.choice }}
-      <input type="submit" value="取得">
     </form>
 
     <table>
