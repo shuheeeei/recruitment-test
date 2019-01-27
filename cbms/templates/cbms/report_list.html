@@ -7,13 +7,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'cbms/css/style.css' %}">
   </head>
   <body>
+
     <div class="wrapper">
       <h2>レポート</h2>
-      <form class="" action="{% url 'report' %}" method="post">
+      <form id="submit_form" action="{% url 'report' %}" method="post">
         {% csrf_token %}
-        {{form.choice.label_tag}}
-        {{ form.choice }}
-        <input type="submit" value="取得">
+        {{ form }}
       </form>
       <h3>ジャンルと性別 別</h3>
       <table>
@@ -57,5 +56,8 @@
           {% endfor %}
       </table>
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="{% static 'cbms/js/app.js' %}"></script>
   </body>
 </html>
