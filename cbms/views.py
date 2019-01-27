@@ -45,14 +45,24 @@ def costomer_create(request):
 def costomer_edit(request, num):
     obj = Costomer.objects.get(id=num)
     if request.method == 'POST':
-        costomer = CostomerForm(request.POST, instance=obj)
-        costomer.save()
-        return redirect(to='/cbms/costomers')
-    params = {
-            'title': 'Costomer Edit',
-            'id': num,
-            'form': CostomerForm(instance=obj),
-    }
+        form = CostomerForm(request.POST)
+        if form.is_valid():
+            costomer = CostomerForm(request.POST, instance=obj)
+            costomer.save()
+            return redirect(to='/cbms/costomers')
+        else:
+            params = {
+                    'title': 'Costomer Edit',
+                    'id': num,
+                    'form': CostomerForm(instance=obj),
+                    'message': '正しい年齢を入力してください(10~79歳)',
+            }
+    if request.method == 'GET':
+        params = {
+                'title': 'Costomer Edit',
+                'id': num,
+                'form': CostomerForm(instance=obj),
+        }
     return render(request, 'cbms/costomer_edit.html', params)
 
 
